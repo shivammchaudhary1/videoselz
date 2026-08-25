@@ -1,0 +1,89 @@
+.tableWrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.productName {
+  font-weight: 500;
+}
+
+.productPrice {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.productName {
+  font-weight: 500;
+}
+
+.productPrice {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #64748b;
+}

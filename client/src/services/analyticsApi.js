@@ -13,3 +13,24 @@ export const getVideoAnalytics = async (page = 1, limit = 5) => {
 
   return data;
 };
+
+export const createEngagementEvent = async (videoId, eventType) => {
+  const response = await fetch(`${API_URL}/api/events`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      videoId,
+      eventType,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Failed to create engagement event');
+  }
+
+  return data;
+};
