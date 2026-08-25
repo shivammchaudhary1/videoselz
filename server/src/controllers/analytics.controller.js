@@ -2,8 +2,8 @@ import db from '../config/database/db.js';
 
 export const getVideoAnalytics = (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
 
     if (
       !Number.isInteger(page) ||
