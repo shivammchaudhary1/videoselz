@@ -32,11 +32,15 @@ function AnalyticsTable({ videos }) {
                   </div>
                 </td>
 
-                <td>{video.views}</td>
-                <td>{video.clicks}</td>
-                <td>{video.conversions}</td>
+                <td className={styles.metric}>{video.views}</td>
+                <td className={styles.metric}>{video.clicks}</td>
+                <td className={styles.metric}>{video.conversions}</td>
 
-                <td>{conversionRate.toFixed(2)}%</td>
+                <td>
+                  <span className={styles.conversionRate}>
+                    {conversionRate.toFixed(2)}%
+                  </span>
+                </td>
               </tr>
             );
           })}

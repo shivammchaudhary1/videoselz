@@ -87,3 +87,89 @@
   font-size: 13px;
   color: #64748b;
 }
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.table th,
+.table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table td {
+  font-size: 14px;
+  color: #334155;
+}
+
+.table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table td:first-child {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.productName {
+  font-weight: 600;
+  color: #334155;
+}
+
+.productPrice {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.metric {
+  font-variant-numeric: tabular-nums;
+}
+
+.conversionRate {
+  display: inline-block;
+  min-width: 68px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 13px;
+  }
+}

@@ -15,7 +15,6 @@ function App() {
   const [videos, setVideos] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [page, setPage] = useState(1);
-
   const [loading, setLoading] = useState(true);
   const [simulating, setSimulating] = useState(false);
   const [error, setError] = useState('');
@@ -82,15 +81,19 @@ function App() {
           />
         </DashboardHeader>
 
-        <section>
+        <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Video Performance</h2>
 
-          {loading && <p className={styles.message}>Loading analytics...</p>}
+          {loading && (
+            <div className={styles.message}>Loading analytics...</div>
+          )}
 
-          {error && <p className={styles.message}>{error}</p>}
+          {!loading && error && (
+            <div className={`${styles.message} ${styles.error}`}>{error}</div>
+          )}
 
           {!loading && !error && videos.length === 0 && (
-            <p className={styles.message}>No videos found.</p>
+            <div className={styles.message}>No videos found.</div>
           )}
 
           {!loading && !error && videos.length > 0 && (
