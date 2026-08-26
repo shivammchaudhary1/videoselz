@@ -25,15 +25,39 @@ function AnalyticsTable({ videos }) {
                 <td>{video.title}</td>
 
                 <td>
-                  <div className={styles.productName}>{video.product.name}</div>
+                  <div className={styles.product}>
+                    <div className={styles.imageWrapper}>
+                      {video.product.imageUrl ? (
+                        <img
+                          src={video.product.imageUrl}
+                          alt={video.product.name}
+                          className={styles.productImage}
+                        />
+                      ) : (
+                        <div className={styles.imageFallback}>No image</div>
+                      )}
+                    </div>
 
-                  <div className={styles.productPrice}>
-                    ${video.product.price.toFixed(2)}
+                    <div className={styles.productDetails}>
+                      <div className={styles.productName}>
+                        {video.product.name}
+                      </div>
+
+                      <div className={styles.productCategory}>
+                        {video.product.category}
+                      </div>
+
+                      <div className={styles.productPrice}>
+                        ${video.product.price.toFixed(2)}
+                      </div>
+                    </div>
                   </div>
                 </td>
 
                 <td className={styles.metric}>{video.views}</td>
+
                 <td className={styles.metric}>{video.clicks}</td>
+
                 <td className={styles.metric}>{video.conversions}</td>
 
                 <td>
