@@ -2,7 +2,7 @@
 
 A full-stack analytics dashboard for tracking engagement with shoppable product videos.
 
-The dashboard shows video views, clicks, add-to-cart conversions, conversion rate, product information, pagination, and includes a **Simulate Traffic** feature to generate engagement events.
+The application tracks video views, clicks, and add-to-cart events, displays aggregated analytics, calculates conversion rate on the frontend, and includes a **Simulate Traffic** feature for generating engagement events.
 
 ## Tech Stack
 
@@ -21,27 +21,68 @@ The dashboard shows video views, clicks, add-to-cart conversions, conversion rat
 ### Database
 
 - SQLite
+- Raw SQL
 
 ## Features
 
 - Video analytics dashboard
 - Views, clicks, and add-to-cart conversions
-- Conversion rate calculated on the frontend
-- Product images, names, categories, and prices
+- Frontend-calculated conversion rate
+- Product details with image, category, and price
 - Backend pagination
+- Simulated engagement traffic
+- Automatic analytics refresh after new events
 - Responsive analytics table
-- Simulate Traffic button
 - Loading, error, and empty states
-- Reusable SQLite seed script
+- Reusable database migration and seed scripts
+
+## Architecture
+
+The backend follows a lightweight MVC-style structure:
+
+```text
+Route
+  ↓
+Controller
+  ↓
+Model
+  ↓
+SQLite
+```
+
+- **Routes** define API endpoints.
+- **Controllers** handle request validation and HTTP responses.
+- **Models** contain database access and raw SQL queries.
+- **Database scripts** handle schema creation and sample data seeding.
+
+Database setup is kept separate from runtime application logic.
 
 ## Project Structure
 
 ```text
 videoselz/
 ├── client/
+│   └── src/
+│       ├── components/
+│       ├── services/
+│       └── styles/
+│
 ├── server/
-├── README.md
-└── AI_PROMPTING.md
+│   ├── database/
+│   │   ├── schema.sql
+│   │   ├── migrate.js
+│   │   └── seed.js
+│   │
+│   └── src/
+│       ├── config/
+│       ├── controllers/
+│       ├── models/
+│       ├── routes/
+│       ├── app.js
+│       └── server.js
+│
+├── AI_PROMPTING.md
+└── README.md
 ```
 
 ## Local Setup
@@ -53,38 +94,34 @@ git clone https://github.com/shivammchaudhary1/videoselz.git
 cd videoselz
 ```
 
----
+## Backend
 
-## Backend Setup
-
-Open a terminal:
+Install dependencies:
 
 ```bash
 cd server
 npm install
 ```
 
-Create a `.env` file inside the `server` directory.
-
-You can copy the example file:
+Create the environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Or create `server/.env` manually with:
+The backend environment uses:
 
 ```env
 PORT=5000
 ```
 
-Create the SQLite database tables:
+Create the SQLite tables:
 
 ```bash
 npm run db:migrate
 ```
 
-Seed the database:
+Seed sample data:
 
 ```bash
 npm run db:seed
@@ -96,15 +133,13 @@ Start the backend:
 npm run dev
 ```
 
-Backend:
+Backend runs at:
 
 ```text
 http://localhost:5000
 ```
 
----
-
-## Frontend Setup
+## Frontend
 
 Open another terminal:
 
@@ -113,15 +148,13 @@ cd client
 npm install
 ```
 
-Create a `.env` file inside the `client` directory.
-
-You can copy the example file:
+Create the environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Or create `client/.env` manually with:
+The frontend environment uses:
 
 ```env
 VITE_API_URL=http://localhost:5000
@@ -133,13 +166,11 @@ Start the frontend:
 npm run dev
 ```
 
-Frontend:
+Frontend runs at:
 
 ```text
 http://localhost:5173
 ```
-
-Open the frontend URL in your browser.
 
 ## API Endpoints
 
@@ -172,38 +203,12 @@ add_to_cart
 GET /api/analytics/videos?page=1&limit=5
 ```
 
-Returns video analytics including:
+The endpoint returns video and product information along with aggregated:
 
-- product information
-- views
-- clicks
-- conversions
-- pagination data
-
-## Conversion Rate
-
-Conversion rate is calculated on the frontend as required by the assignment:
-
-```text
-Conversion Rate = Conversions / Views × 100
-```
-
-If a video has zero views, the dashboard displays:
-
-```text
-0.00%
-```
-
-## Simulate Traffic
-
-The **Simulate Traffic** button:
-
-1. Selects a random video.
-2. Selects a random event type.
-3. Sends the event to `POST /api/events`.
-4. Saves the event in SQLite.
-5. Fetches the latest analytics.
-6. Refreshes the dashboard.
+- Views
+- Clicks
+- Conversions
+- Pagination metadata
 
 ## Database
 
@@ -221,95 +226,76 @@ Video
 EngagementEvent
 ```
 
-The analytics query uses SQL aggregation with:
+The analytics query uses raw SQL with:
 
 ```text
 JOIN
 LEFT JOIN
-GROUP BY
 SUM
 CASE
+GROUP BY
 LIMIT
 OFFSET
 ```
 
-A `LEFT JOIN` is used so videos with zero engagement events are still returned.
+A `LEFT JOIN` is used so videos with no engagement events are still included in the analytics response.
 
-## Seed Data
+## Conversion Rate
 
-Run:
+Conversion rate is intentionally calculated on the frontend:
 
-```bash
-cd server
-npm run db:seed
+```text
+Conversion Rate = Conversions / Views × 100
 ```
 
-The seed script creates sample products, videos, and engagement events.
+When a video has zero views, the dashboard displays:
 
-Product information is seeded from local JSON data, including product images and categories. The application does not depend on an external product API at runtime.
-
-One video is intentionally left without engagement events to verify the analytics `LEFT JOIN` behavior.
-
-## Useful Commands
-
-### Backend
-
-```bash
-cd server
-
-npm install
-npm run db:migrate
-npm run db:seed
-npm run dev
+```text
+0.00%
 ```
 
-### Frontend
+## Simulate Traffic
 
-```bash
-cd client
+The **Simulate Traffic** button:
 
-npm install
-npm run dev
-```
-
-### Frontend Production Build
-
-```bash
-cd client
-npm run build
-```
+1. Selects a random video.
+2. Selects a random event type.
+3. Sends the event to `POST /api/events`.
+4. Stores the event in SQLite.
+5. Fetches the latest analytics.
+6. Refreshes the dashboard.
 
 ## AI Collaboration
 
-AI was used to speed up development, review implementation decisions, help with SQLite and SQL aggregation, debug issues, and improve responsiveness.
+AI was used during development for planning, SQLite and SQL guidance, implementation review, debugging, edge-case analysis, and frontend improvements.
 
-Details of the major AI-assisted interactions are documented in:
+Major AI-assisted interactions are documented in:
 
-```text
-AI_PROMPTING.md
-```
+[`AI_PROMPTING.md`](./AI_PROMPTING.md)
 
 ## Candidate Pitch
 
 30-second private/unlisted YouTube pitch:
 
-```text
 https://youtu.be/aR6iPRziiOM
-```
 
 ## Technical Walkthrough
 
-3–5 minute project walkthrough:
+3–5 minute project and architecture walkthrough:
 
-```text
 https://youtu.be/ErCzajkRJ0o
-```
+
+## Other Public Work
+
+- [Enterprise Notion](https://github.com/shivammchaudhary1/enterprise-notion)
+- [Flawless](https://github.com/shivammchaudhary1/flawless)
+- [Skin Care](https://github.com/shivammchaudhary1/skin-care)
+- [Trip to Heaven](https://github.com/shivammchaudhary1/trip-to-heaven)
+- [Natural Language Task Manager](https://github.com/shivammchaudhary1/natural-language-task-manager)
 
 ## Repository
 
-```text
 https://github.com/shivammchaudhary1/videoselz
-```
 
 ## Author
 

@@ -1,4 +1,6 @@
-import db from '../config/database/db.js';
+import { findVideoById } from '../models/video.model.js';
+
+import { createEngagementEvent } from '../models/engagementEvent.model.js';
 
 const allowedEventTypes = ['view', 'click', 'add_to_cart'];
 
@@ -27,7 +29,7 @@ export const createEvent = (req, res) => {
       });
     }
 
-    const video = db.prepare('SELECT id FROM videos WHERE id = ?').get(videoId);
+    const video = findVideoById(videoId);
 
     if (!video) {
       return res.status(404).json({
@@ -36,14 +38,7 @@ export const createEvent = (req, res) => {
       });
     }
 
-    const result = db
-      .prepare(
-        `
-        INSERT INTO engagement_events (video_id, event_type)
-        VALUES (?, ?)
-      `
-      )
-      .run(videoId, eventType);
+    const result = createEngagementEvent(videoId, eventType);
 
     return res.status(201).json({
       success: true,
