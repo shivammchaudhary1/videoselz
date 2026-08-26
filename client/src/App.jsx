@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import {
   getVideoAnalytics,
   createEngagementEvent,
@@ -21,27 +22,48 @@ function App() {
 
   const limit = 5;
 
+  useEffect(() => {
+    let ignore = false;
+
+    getVideoAnalytics(page, limit)
+      .then((response) => {
+        if (ignore) return;
+
+        setVideos(response.data);
+        setPagination(response.pagination);
+        setError('');
+      })
+      .catch((error) => {
+        if (ignore) return;
+
+        setError(error.message);
+      })
+      .finally(() => {
+        if (ignore) return;
+
+        setLoading(false);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [page]);
+
   const loadAnalytics = async () => {
     try {
-      setLoading(true);
-      setError('');
-
       const response = await getVideoAnalytics(page, limit);
 
       setVideos(response.data);
       setPagination(response.pagination);
+      setError('');
     } catch (error) {
       setError(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadAnalytics();
-  }, [page]);
-
   const handlePageChange = (newPage) => {
+    setLoading(true);
+    setError('');
     setPage(newPage);
   };
 

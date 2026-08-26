@@ -1,4 +1,4 @@
-import styles from '../../styles//TrafficSimulator.module.css';
+import styles from '../../styles/TrafficSimulator.module.css';
 
 function TrafficSimulator({ onSimulate, loading }) {
   return (

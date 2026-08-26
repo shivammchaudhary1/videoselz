@@ -1,14 +1,18 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import db from './db.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import db from '../src/config/db/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const productsFilePath = path.resolve(__dirname, '../../utility/products.json');
+const productsFilePath = path.resolve(
+  __dirname,
+  '../src/utility/products.json'
+);
 
-const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
+const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf8'));
 
 const seedDatabase = db.transaction(() => {
   const productCount = db
@@ -113,15 +117,19 @@ const seedDatabase = db.transaction(() => {
     'add_to_cart',
   ];
 
-  // Keep the last video without events
-  // so LEFT JOIN behavior is easy to verify.
+  // Keep the last video without engagement events
+  // to verify LEFT JOIN behavior.
   const videosWithEvents = videoIds.slice(0, -1);
 
   for (let i = 0; i < 180; i++) {
-    const videoId =
-      videosWithEvents[Math.floor(Math.random() * videosWithEvents.length)];
+    const randomVideoIndex = Math.floor(
+      Math.random() * videosWithEvents.length
+    );
 
-    const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+    const randomEventIndex = Math.floor(Math.random() * eventTypes.length);
+
+    const videoId = videosWithEvents[randomVideoIndex];
+    const eventType = eventTypes[randomEventIndex];
 
     insertEvent.run(videoId, eventType);
   }
@@ -143,6 +151,7 @@ try {
   console.table(summary);
 } catch (error) {
   console.error('Database seed failed:', error.message);
+
   process.exitCode = 1;
 } finally {
   db.close();
