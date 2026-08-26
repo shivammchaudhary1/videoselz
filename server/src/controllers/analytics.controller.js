@@ -3,6 +3,7 @@ import db from '../config/database/db.js';
 export const getVideoAnalytics = (req, res) => {
   try {
     const page = req.query.page ? Number(req.query.page) : 1;
+
     const limit = req.query.limit ? Number(req.query.limit) : 10;
 
     if (
@@ -43,6 +44,8 @@ export const getVideoAnalytics = (req, res) => {
           p.id AS productId,
           p.name AS productName,
           p.price AS productPrice,
+          p.image_url AS productImageUrl,
+          p.category AS productCategory,
 
           SUM(
             CASE
@@ -79,7 +82,9 @@ export const getVideoAnalytics = (req, res) => {
           v.video_url,
           p.id,
           p.name,
-          p.price
+          p.price,
+          p.image_url,
+          p.category
 
         ORDER BY v.id ASC
 
@@ -93,11 +98,15 @@ export const getVideoAnalytics = (req, res) => {
       id: row.id,
       title: row.title,
       videoUrl: row.videoUrl,
+
       product: {
         id: row.productId,
         name: row.productName,
         price: row.productPrice,
+        imageUrl: row.productImageUrl,
+        category: row.productCategory,
       },
+
       views: row.views,
       clicks: row.clicks,
       conversions: row.conversions,

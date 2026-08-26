@@ -1,7 +1,16 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import db from './db.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const productsFilePath = path.resolve(__dirname, '../../utility/products.json');
+
+const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
+
 const seedDatabase = db.transaction(() => {
-  // Check if data already exists
   const productCount = db
     .prepare('SELECT COUNT(*) AS count FROM products')
     .get().count;
@@ -17,16 +26,18 @@ const seedDatabase = db.transaction(() => {
   if (productCount > 0 || videoCount > 0 || eventCount > 0) {
     console.log('Existing seed data found. Replacing it...');
 
-    // Delete children before parents
     db.prepare('DELETE FROM engagement_events').run();
     db.prepare('DELETE FROM videos').run();
     db.prepare('DELETE FROM products').run();
 
-    // Reset AUTOINCREMENT counters
     db.prepare(
       `
       DELETE FROM sqlite_sequence
-      WHERE name IN ('products', 'videos', 'engagement_events')
+      WHERE name IN (
+        'products',
+        'videos',
+        'engagement_events'
+      )
     `
     ).run();
   } else {
@@ -34,83 +45,58 @@ const seedDatabase = db.transaction(() => {
   }
 
   const insertProduct = db.prepare(`
-    INSERT INTO products (name, price)
-    VALUES (?, ?)
+    INSERT INTO products (
+      name,
+      price,
+      image_url,
+      category
+    )
+    VALUES (?, ?, ?, ?)
   `);
 
-  // IMPORTANT:
-  // We save the generated product IDs instead of assuming 1, 2, 3...
+  const selectedProducts = products.slice(0, 10);
+
   const productIds = [];
 
-  const products = [
-    ['Running Shoes', 89.99],
-    ['Wireless Headphones', 129.99],
-    ['Travel Backpack', 74.99],
-    ['Coffee Maker', 59.99],
-    ['Fitness Watch', 149.99],
-  ];
+  for (const product of selectedProducts) {
+    const result = insertProduct.run(
+      product.title,
+      product.price,
+      product.image,
+      product.category
+    );
 
-  for (const product of products) {
-    const result = insertProduct.run(...product);
     productIds.push(Number(result.lastInsertRowid));
   }
 
   const insertVideo = db.prepare(`
-    INSERT INTO videos (product_id, video_url, title)
+    INSERT INTO videos (
+      product_id,
+      video_url,
+      title
+    )
     VALUES (?, ?, ?)
   `);
 
-  const videos = [
-    [productIds[0], 'https://example.com/shoes-demo.mp4', 'Running Shoes Demo'],
-    [
-      productIds[0],
-      'https://example.com/shoes-review.mp4',
-      'Running Shoes Review',
-    ],
-    [
-      productIds[1],
-      'https://example.com/headphones-demo.mp4',
-      'Headphones Demo',
-    ],
-    [
-      productIds[1],
-      'https://example.com/headphones-review.mp4',
-      'Headphones Review',
-    ],
-    [
-      productIds[2],
-      'https://example.com/backpack-demo.mp4',
-      'Travel Backpack Demo',
-    ],
-    [
-      productIds[2],
-      'https://example.com/backpack-review.mp4',
-      'Travel Backpack Review',
-    ],
-    [productIds[3], 'https://example.com/coffee-demo.mp4', 'Coffee Maker Demo'],
-    [
-      productIds[3],
-      'https://example.com/coffee-review.mp4',
-      'Coffee Maker Review',
-    ],
-    [productIds[4], 'https://example.com/watch-demo.mp4', 'Fitness Watch Demo'],
-    [
-      productIds[4],
-      'https://example.com/watch-review.mp4',
-      'Fitness Watch Review',
-    ],
-  ];
-
-  // Again, save actual generated video IDs
   const videoIds = [];
 
-  for (const video of videos) {
-    const result = insertVideo.run(...video);
+  for (let i = 0; i < selectedProducts.length; i++) {
+    const product = selectedProducts[i];
+
+    const result = insertVideo.run(
+      productIds[i],
+      `https://example.com/product-${i + 1}-demo.mp4`,
+      `${product.title} Demo`
+    );
+
     videoIds.push(Number(result.lastInsertRowid));
   }
 
   const insertEvent = db.prepare(`
-    INSERT INTO engagement_events (video_id, event_type)
+    INSERT INTO engagement_events (
+      video_id,
+      event_type
+    )
     VALUES (?, ?)
   `);
 
@@ -127,11 +113,11 @@ const seedDatabase = db.transaction(() => {
     'add_to_cart',
   ];
 
-  // First 9 videos get events.
-  // Last video intentionally stays at 0 events.
+  // Keep the last video without events
+  // so LEFT JOIN behavior is easy to verify.
   const videosWithEvents = videoIds.slice(0, -1);
 
-  for (let i = 0; i < 150; i++) {
+  for (let i = 0; i < 180; i++) {
     const videoId =
       videosWithEvents[Math.floor(Math.random() * videosWithEvents.length)];
 
@@ -146,7 +132,9 @@ try {
 
   const summary = {
     products: db.prepare('SELECT COUNT(*) AS count FROM products').get().count,
+
     videos: db.prepare('SELECT COUNT(*) AS count FROM videos').get().count,
+
     events: db.prepare('SELECT COUNT(*) AS count FROM engagement_events').get()
       .count,
   };
