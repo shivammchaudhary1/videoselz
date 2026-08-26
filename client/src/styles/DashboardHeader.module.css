@@ -2,56 +2,45 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 32px;
-}
-
-.title {
-  margin: 0 0 8px;
-  font-size: 32px;
-}
-
-.subtitle {
-  margin: 0;
-  color: #64748b;
-}
-
-@media (max-width: 640px) {
-  .header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 24px;
   margin-bottom: 28px;
 }
 
 .title {
   margin: 0;
+  color: #0f172a;
   font-size: 32px;
   font-weight: 750;
+  line-height: 1.2;
   letter-spacing: -0.5px;
-  color: #0f172a;
 }
 
 .subtitle {
   margin: 6px 0 0;
   color: #64748b;
   font-size: 15px;
+  line-height: 1.5;
 }
 
 @media (max-width: 640px) {
   .header {
     flex-direction: column;
     align-items: stretch;
+    gap: 16px;
+    margin-bottom: 24px;
   }
 
   .title {
     font-size: 27px;
+  }
+}
+
+@media (max-width: 400px) {
+  .title {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 14px;
   }
 }
